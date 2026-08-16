@@ -44,6 +44,7 @@ async def game(ia: discord.Interaction, rounds: int = 5, timer: int = 30):
 
     if timer > 180:
         await ia.response.send_message("Maximum timer is 120 seconds!", ephemeral=True)
+        return
 
     await ia.response.send_message(
         f"Starting a {rounds}-round 24-game, timer {timer} secs... "
