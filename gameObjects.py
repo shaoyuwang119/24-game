@@ -117,7 +117,7 @@ class GameModal(discord.ui.Modal, title="24 Game"):
 
 class GameButton(discord.ui.Button):
     def __init__(self, numbers: list, session: GameSession, answered: list):
-        super().__init__(label="Enter answer")
+        super().__init__(label="Enter answer", style=discord.ButtonStyle.primary)
         self.numbers = numbers
         self.session = session
         self.answered = answered
