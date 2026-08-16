@@ -142,6 +142,7 @@ class GameView(discord.ui.View):
         self.solution = solution
 
     async def on_timeout(self):
+        # print(f"[{discord.utils.utcnow()}] on_timeout fired")
         for item in self.children:
             if isinstance(item, (discord.ui.Button, discord.ui.Select)):
                 item.disabled = True
@@ -150,14 +151,17 @@ class GameView(discord.ui.View):
             content=f"Round {self.session.round}/{self.session.totalRounds}\nMake a 24 with: {self.numbers} \n**Time's up!** One solution is `{self.solution}`",
             view=self,
         )
+        # print(f"[{discord.utils.utcnow()}] message edit completed.")
 
         await asyncio.sleep(3)
         await advance_round(self.session)
 
 
 async def start_round(session: GameSession):
+    # print(f"[{discord.utils.utcnow()}] round {session.round + 1} starting")
     session.round += 1
     idx = random.randint(0, session.ds.num_rows - 1)
+    print(idx)
     numbers = session.ds[idx]["numbers"]
     solution = session.ds[idx]["solutions"][0]
     answered = []

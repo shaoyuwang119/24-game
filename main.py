@@ -33,10 +33,13 @@ async def on_ready():
 
 
 @bot.tree.command(name="game", description="Starts a game of 24-Game.")
-@app_commands.describe(rounds="Number of rounds the game should go for.")
-async def game(ia: discord.Interaction, rounds: int):
-    await ia.response.send_message("Starting a 5-round 24-game...")
-    session = GameSession(rounds, ia.channel, bot, ds, TIMEOUT)  # type: ignore
+@app_commands.describe(rounds="Number of rounds the game should go for (default 5).")
+@app_commands.describe(timer="Number of seconds to answer each round (default 30).")
+async def game(ia: discord.Interaction, rounds: int = 5, timer: int = 30):
+    await ia.response.send_message(
+        f"Starting a {rounds}-round 24-game, timer {timer} secs... "
+    )
+    session = GameSession(rounds, ia.channel, bot, ds, timer)  # type: ignore
     await start_round(session)
 
 
