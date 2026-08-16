@@ -11,6 +11,7 @@ from discord.ext import commands
 from simpleeval import SimpleEval
 from dotenv import load_dotenv
 from datasets import load_dataset
+from keep_alive import keep_alive
 
 from gameObjects import *
 
@@ -43,4 +44,5 @@ async def game(ia: discord.Interaction, rounds: int = 5, timer: int = 30):
     await start_round(session)
 
 
+keep_alive()
 bot.run(TOKEN)
