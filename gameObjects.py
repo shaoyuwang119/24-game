@@ -207,6 +207,7 @@ async def start_round(session: GameSession):
     view = GameView(numbers, session, answered, solution, deadline)
 
     session.message = await session.channel.send(content, view=view)
+    print(f"[{discord.utils.utcnow()}] message posted, view now live")
 
 
 async def advance_round(session: GameSession):
