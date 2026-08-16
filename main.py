@@ -39,7 +39,7 @@ async def on_ready():
 async def game(ia: discord.Interaction, rounds: int = 5, timer: int = 30):
 
     if rounds > 30:
-        await ia.response.send_message("Maximum allowed rounds is 30!", ephemeral=True)
+        await ia.response.send_message("Maximum allowed rounds is 30.", ephemeral=True)
         return
 
     if timer > 180:
