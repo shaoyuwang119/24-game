@@ -35,23 +35,28 @@ class GameSession:
 
 
 class GameModal(discord.ui.Modal, title="24 Game"):
-    def __init__(self, numbers: list, session: GameSession, answered: list):
+    def __init__(
+        self,
+        numbers: list,
+        session: GameSession,
+        answered: list,
+        deadline: datetime.datetime,
+    ):
         super().__init__(timeout=session.timeout + 30)
         self.start_time = discord.utils.utcnow()
         self.numbers = numbers
         self.session = session
         self.answered = answered
+        self.deadline = deadline
         self.input = discord.ui.TextInput(
             label=f"Make a 24 with: {numbers}",
             placeholder="Enter your expression here...",
-            max_length=24,
+            max_length=20,
         )
         self.add_item(self.input)
 
     async def on_submit(self, ia: discord.Interaction):
-
-        elapsed = (discord.utils.utcnow() - self.start_time).total_seconds()
-        if elapsed > self.session.timeout:
+        if discord.utils.utcnow() > self.deadline:
             await ia.response.send_message(
                 "Time's up! You can't answer anymore.", ephemeral=True
             )
@@ -118,11 +123,18 @@ class GameModal(discord.ui.Modal, title="24 Game"):
 
 
 class GameButton(discord.ui.Button):
-    def __init__(self, numbers: list, session: GameSession, answered: list):
+    def __init__(
+        self,
+        numbers: list,
+        session: GameSession,
+        answered: list,
+        deadline: datetime.datetime,
+    ):
         super().__init__(label="Enter answer", style=discord.ButtonStyle.primary)
         self.numbers = numbers
         self.session = session
         self.answered = answered
+        self.deadline = deadline
 
     async def callback(self, interaction: discord.Interaction):
         if interaction.user.id in self.answered:
@@ -131,17 +143,25 @@ class GameButton(discord.ui.Button):
             )
         else:
             await interaction.response.send_modal(
-                GameModal(self.numbers, self.session, self.answered)
+                GameModal(self.numbers, self.session, self.answered, self.deadline)
             )
 
 
 class GameView(discord.ui.View):
-    def __init__(self, numbers: list, session: GameSession, answered: list, solution):
+    def __init__(
+        self,
+        numbers: list,
+        session: GameSession,
+        answered: list,
+        solution,
+        deadline: datetime.datetime,
+    ):
         super().__init__(timeout=session.timeout)
-        self.add_item(GameButton(numbers, session, answered))
+        self.add_item(GameButton(numbers, session, answered, deadline))
         self.numbers = numbers
         self.session = session
         self.solution = solution
+        self.deadline = deadline
 
     async def on_timeout(self):
         print(f"[{discord.utils.utcnow()}] on_timeout fired")
@@ -159,7 +179,7 @@ class GameView(discord.ui.View):
 
     async def _edit_message_safely(self, message: discord.Message):
         try:
-            await self.session.message.edit(
+            await message.edit(
                 content=f"Round {self.session.round}/{self.session.totalRounds}\nMake a 24 with: {self.numbers} \n**Time's up!** One solution is `{self.solution}`",
                 view=self,
             )
@@ -184,7 +204,7 @@ async def start_round(session: GameSession):
     timestamp = discord.utils.format_dt(deadline, style="R")
     content = f"Round {session.round}/{session.totalRounds}\nMake a 24 with: {numbers} \nTime remaining: {timestamp}"
 
-    view = GameView(numbers, session, answered, solution)
+    view = GameView(numbers, session, answered, solution, deadline)
 
     session.message = await session.channel.send(content, view=view)
 
