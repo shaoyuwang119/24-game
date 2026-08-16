@@ -40,6 +40,7 @@ async def game(ia: discord.Interaction, rounds: int = 5, timer: int = 30):
     await ia.response.send_message(
         f"Starting a {rounds}-round 24-game, timer {timer} secs... "
     )
+    await asyncio.sleep(3)
     session = GameSession(rounds, ia.channel, bot, ds, timer)  # type: ignore
     await start_round(session)
 
