@@ -38,7 +38,7 @@ async def on_ready():
 @app_commands.describe(timer="Number of seconds to answer each round (default 30).")
 async def game(ia: discord.Interaction, rounds: int = 5, timer: int = 30):
 
-    if rounds > 24:
+    if rounds > 30:
         await ia.response.send_message("Maximum allowed rounds is 30!", ephemeral=True)
         return
 
