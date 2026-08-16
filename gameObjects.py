@@ -28,6 +28,7 @@ class GameSession:
         self.round = 0
         self.scores = {}
         self.message: discord.Message = None  # type: ignore
+        self.background_tasks = set()
 
     def add_point(self, user_id: int):
         self.scores[user_id] = self.scores.get(user_id, 0) + 1
@@ -104,6 +105,7 @@ class GameModal(discord.ui.Modal, title="24 Game"):
                 f"{ia.user.mention} You must use all the provided numbers, and you cannot any other number!",
                 ephemeral=True,
             )
+            return
 
         if guessVal == 24:
             self.session.add_point(ia.user.id)
@@ -147,14 +149,23 @@ class GameView(discord.ui.View):
             if isinstance(item, (discord.ui.Button, discord.ui.Select)):
                 item.disabled = True
 
-        await self.session.message.edit(
-            content=f"Round {self.session.round}/{self.session.totalRounds}\nMake a 24 with: {self.numbers} \n**Time's up!** One solution is `{self.solution}`",
-            view=self,
-        )
-        print(f"[{discord.utils.utcnow()}] message edit completed.")
+        message_to_edit = self.session.message
+        task = asyncio.create_task(self._edit_message_safely(message_to_edit))
+        self.session.background_tasks.add(task)
+        task.add_done_callback(self.session.background_tasks.discard)
 
         await asyncio.sleep(3)
         await advance_round(self.session)
+
+    async def _edit_message_safely(self, message: discord.Message):
+        try:
+            await self.session.message.edit(
+                content=f"Round {self.session.round}/{self.session.totalRounds}\nMake a 24 with: {self.numbers} \n**Time's up!** One solution is `{self.solution}`",
+                view=self,
+            )
+            print(f"[{discord.utils.utcnow()}] message edit completed.")
+        except discord.HTTPException as e:
+            print(f"[{discord.utils.utcnow()}] message edit failed: {e}")
 
 
 async def start_round(session: GameSession):
