@@ -18,4 +18,4 @@ HACK CLUB AI DISCLOSURE: Used AI to give me a brief crash course on how to use t
 - **[simpleeval](https://pypi.org/project/simpleeval/)** - safe evaluation of player-submitted math expressions
 - **[Hugging Face `datasets`](https://huggingface.co/docs/datasets/)** - puzzle data loading
 - **Flask** - lightweight keep-alive endpoint for hosting
-- **[Render](https://render.com/)** - deployment/hosting
+- Hack Club Nest (Ubuntu server) - deployment/hosting
