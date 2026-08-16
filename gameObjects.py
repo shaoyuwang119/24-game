@@ -160,10 +160,13 @@ class GameView(discord.ui.View):
 async def start_round(session: GameSession):
     print(f"[{discord.utils.utcnow()}] round {session.round + 1} starting")
     session.round += 1
-    idx = random.randint(0, session.ds.num_rows - 1)
-    print(idx)
-    numbers = session.ds[idx]["numbers"]
-    solution = session.ds[idx]["solutions"][0]
+
+    def get_row():
+        idx = random.randint(0, session.ds.num_rows - 1)
+        row = session.ds[idx]
+        return row["numbers"], row["solutions"][0]
+
+    numbers, solution = await asyncio.to_thread(get_row)
     answered = []
 
     deadline = discord.utils.utcnow() + datetime.timedelta(seconds=session.timeout)
