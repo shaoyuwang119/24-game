@@ -4,7 +4,7 @@ A minimal discord bot that lets players play the classic **24 Game** math game. 
 Start a multi-round game with `/game`, and submit answers through the popup form.
 
 Invite link:
-[https://discord.com/oauth2/authorize?client_id=1537995314806652958&permissions=274877982720&integration_type=0&scope=bot](https://discord.com/oauth2/authorize?client_id=1537995314806652958&permissions=4503599627446272&integration_type=0&scope=bot)
+https://discord.com/oauth2/authorize?client_id=1537995314806652958&permissions=274877982720&integration_type=0&scope=bot
 
 ## Credits
 Pulls a data set of valid 24-game combinations from nlile's HuggingFace dataset.
