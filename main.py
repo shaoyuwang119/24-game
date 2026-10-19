@@ -38,6 +38,32 @@ async def on_ready():
 @app_commands.describe(timer="Number of seconds to answer each round (default 30).")
 async def game(ia: discord.Interaction, rounds: int = 5, timer: int = 30):
 
+    if ia.guild is None or ia.channel is None:
+        await ia.response.send_message(
+            "This command can only be used in a server.", ephemeral=True
+        )
+        return
+
+    permissions = ia.channel.permissions_for(ia.guild.me)
+
+    missing = []
+
+    if not permissions.manage_messages:
+        missing.append("Manage Messages")
+
+    if not permissions.read_message_history:
+        missing.append("Read Message History")
+
+    if missing:
+        await ia.response.send_message(
+            "I cannot start the game because I'm missing these "
+            "permissions in this channel:\n"
+            + "\n".join(f"• **{permission}**" for permission in missing)
+            + "\n\nPlease ask a server administrator to grant me these permissions.",
+            ephemeral=True,
+        )
+        return
+
     if rounds > 30:
         await ia.response.send_message("Maximum allowed rounds is 30.", ephemeral=True)
         return
